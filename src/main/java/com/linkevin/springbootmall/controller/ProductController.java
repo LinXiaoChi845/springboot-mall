@@ -9,17 +9,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts() {
+
+        List<Product> productList = productService.getProducts();
+
+        // 列表類型的 API，不管有沒有查到數據，都回傳 200 OK
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
+    }
+
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
 
         Product product = productService.getProductById(productId);
 
+        // 單筆資料類型的 API，如果沒有查到數據，要回傳 404 NOT_FOUND，有查詢到數據，才回傳 200 HK
         if (product != null) {
             return ResponseEntity.status(HttpStatus.OK).body(product);
         } else {
