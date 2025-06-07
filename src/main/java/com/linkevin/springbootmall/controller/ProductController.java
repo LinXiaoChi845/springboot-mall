@@ -1,5 +1,6 @@
 package com.linkevin.springbootmall.controller;
 
+import com.linkevin.springbootmall.constant.ProductCategory;
 import com.linkevin.springbootmall.dto.ProductRequest;
 import com.linkevin.springbootmall.model.Product;
 import com.linkevin.springbootmall.service.ProductService;
@@ -18,9 +19,12 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts() {
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String search
+    ) {
 
-        List<Product> productList = productService.getProducts();
+        List<Product> productList = productService.getProducts(category, search);
 
         // 列表類型的 API，不管有沒有查到數據，都回傳 200 OK
         return ResponseEntity.status(HttpStatus.OK).body(productList);
