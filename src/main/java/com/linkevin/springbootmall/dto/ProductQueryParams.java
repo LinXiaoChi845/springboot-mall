@@ -1,13 +1,16 @@
 package com.linkevin.springbootmall.dto;
 
 import com.linkevin.springbootmall.constant.ProductCategory;
+import com.linkevin.springbootmall.constant.SortType;
 
 public class ProductQueryParams {
 
     ProductCategory category;
     String search;
     String orderBy;
-    String sortType;
+    SortType sortType;
+    Integer limit;
+    Integer offset;
 
     public ProductCategory getCategory() {
         return category;
@@ -33,11 +36,27 @@ public class ProductQueryParams {
         this.orderBy = orderBy;
     }
 
-    public String getSortType() {
+    public SortType getSortType() {
         return sortType;
     }
 
-    public void setSortType(String sortType) {
+    public void setSortType(SortType sortType) {
         this.sortType = sortType;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
     }
 }
