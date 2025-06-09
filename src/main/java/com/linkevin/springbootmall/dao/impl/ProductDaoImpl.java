@@ -1,7 +1,7 @@
 package com.linkevin.springbootmall.dao.impl;
 
-import com.linkevin.springbootmall.constant.ProductCategory;
 import com.linkevin.springbootmall.dao.ProductDao;
+import com.linkevin.springbootmall.dto.ProductQueryParams;
 import com.linkevin.springbootmall.dto.ProductRequest;
 import com.linkevin.springbootmall.model.Product;
 import com.linkevin.springbootmall.rowmapper.ProductRowMapper;
@@ -24,21 +24,22 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, " +
                 "description, created_date, last_modified_date "+
                 "FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>();
 
-        if (category != null) {
+        if (productQueryParams.getCategory() != null) {
             sql = sql + " AND category = :category";
-            map.put("category", category.name());
+            map.put("category", productQueryParams.getCategory().name());
         }
 
-        if (search != null && search.equals("") == false) {
+        // 如果是字串參數，要增加判斷，如果是空白，當成是查詢全部，也不做 WHERE 條件判斷
+        if (productQueryParams.getSearch() != null && productQueryParams.getSearch().equals("") == false) {
             sql = sql + " AND product_name LIKE :search";
-            map.put("search", "%" + search + "%");
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
         }
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
