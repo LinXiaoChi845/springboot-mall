@@ -6,6 +6,7 @@ import com.linkevin.springbootmall.dto.ProductQueryParams;
 import com.linkevin.springbootmall.dto.ProductRequest;
 import com.linkevin.springbootmall.model.Product;
 import com.linkevin.springbootmall.service.ProductService;
+import com.linkevin.springbootmall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -25,7 +26,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(
+    public ResponseEntity<Page<Product>> getProducts(
             // 查詢條件 Filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
@@ -46,8 +47,16 @@ public class ProductController {
 
         List<Product> productList = productService.getProducts(productQueryParams);
 
+        Integer total = productService.countProduct(productQueryParams);
+
+        Page<Product> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setTotal(total);
+        page.setResults(productList);
+
         // 列表類型的 API，不管有沒有查到數據，都回傳 200 OK
-        return ResponseEntity.status(HttpStatus.OK).body(productList);
+        return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
     @GetMapping("/products/{productId}")

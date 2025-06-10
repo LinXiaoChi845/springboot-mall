@@ -24,6 +24,29 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
+    public Integer countProduct(ProductQueryParams productQueryParams) {
+        String sql = "SELECT count(product_id) FROM product WHERE 1 = 1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 查詢條件
+        if (productQueryParams.getCategory() != null) {
+            sql = sql + " AND category = :category";
+            map.put("category", productQueryParams.getCategory().name());
+        }
+
+        // 如果是字串參數，要增加判斷，如果是空白，當成是查詢全部，也不做 WHERE 條件判斷
+        if (productQueryParams.getSearch() != null && productQueryParams.getSearch().equals("") == false) {
+            sql = sql + " AND product_name LIKE :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return total;
+    }
+
+    @Override
     public List<Product> getProducts(ProductQueryParams productQueryParams) {
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, " +
                 "description, created_date, last_modified_date "+
@@ -46,7 +69,7 @@ public class ProductDaoImpl implements ProductDao {
         // 排序
         sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSortType().name();
 
-        // 分頁
+        // 分頁 ( 因為 SQL SERVER 沒有 LIMIT 指令，要用 FETCH 指令 )
         sql = sql + " OFFSET :offset ROWS ";
         map.put("offset", productQueryParams.getOffset());
 
