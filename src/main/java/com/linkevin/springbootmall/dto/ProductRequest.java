@@ -1,18 +1,19 @@
 package com.linkevin.springbootmall.dto;
 
 import com.linkevin.springbootmall.constant.ProductCategory;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class ProductRequest {
 
-    @NotEmpty
+    @NotBlank
     private String productName;
 
     @NotNull
     private ProductCategory category;
 
-    @NotNull
+    @NotBlank
     private String imageUrl;
 
     @NotNull
