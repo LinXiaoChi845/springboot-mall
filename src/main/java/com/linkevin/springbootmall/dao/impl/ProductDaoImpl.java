@@ -30,16 +30,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
 
         // 查詢條件
-        if (productQueryParams.getCategory() != null) {
-            sql = sql + " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        // 如果是字串參數，要增加判斷，如果是空白，當成是查詢全部，也不做 WHERE 條件判斷
-        if (productQueryParams.getSearch() != null && productQueryParams.getSearch().equals("") == false) {
-            sql = sql + " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
 
@@ -55,16 +46,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
 
         // 查詢條件
-        if (productQueryParams.getCategory() != null) {
-            sql = sql + " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        // 如果是字串參數，要增加判斷，如果是空白，當成是查詢全部，也不做 WHERE 條件判斷
-        if (productQueryParams.getSearch() != null && productQueryParams.getSearch().equals("") == false) {
-            sql = sql + " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // 排序
         sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSortType().name();
@@ -171,5 +153,22 @@ public class ProductDaoImpl implements ProductDao {
         map.put("productId", productId);
 
         namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    // 拼接查詢條件
+    private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
+
+        if (productQueryParams.getCategory() != null) {
+            sql = sql + " AND category = :category";
+            map.put("category", productQueryParams.getCategory().name());
+        }
+
+        // 如果是字串參數，要增加判斷，如果是空白，當成是查詢全部，也不做 WHERE 條件判斷
+        if (productQueryParams.getSearch() != null && productQueryParams.getSearch().equals("") == false) {
+            sql = sql + " AND product_name LIKE :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        return sql;
     }
 }
