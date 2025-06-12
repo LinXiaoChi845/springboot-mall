@@ -1,6 +1,7 @@
 package com.linkevin.springbootmall.service.impl;
 
 import com.linkevin.springbootmall.dao.UserDao;
+import com.linkevin.springbootmall.dto.UserLoginRequest;
 import com.linkevin.springbootmall.dto.UserRegisterRequest;
 import com.linkevin.springbootmall.model.User;
 import com.linkevin.springbootmall.service.UserService;
@@ -20,6 +21,11 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
+    public User getUserById(Integer userId) {
+        return userDao.getUserById(userId);
+    }
+
+    @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
         // 檢查註冊的 email (因為 Email 不能重複)
         User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
@@ -34,7 +40,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Integer userId) {
-        return userDao.getUserById(userId);
+    public User login(UserLoginRequest userLoginRequest) {
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        if (user == null) {
+            log.warn("該 email ({}) 尚未註冊", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+            return user;
+        } else {
+            log.warn("該 email ({}) 的密碼不正確", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }
