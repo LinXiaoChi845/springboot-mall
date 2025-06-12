@@ -3,7 +3,7 @@ package com.linkevin.springbootmall.service.impl;
 import com.linkevin.springbootmall.dao.UserDao;
 import com.linkevin.springbootmall.dto.UserLoginRequest;
 import com.linkevin.springbootmall.dto.UserRegisterRequest;
-import com.linkevin.springbootmall.model.User;
+import com.linkevin.springbootmall.model.Users;
 import com.linkevin.springbootmall.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,16 +22,16 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public User getUserById(Integer userId) {
+    public Users getUserById(Integer userId) {
         return userDao.getUserById(userId);
     }
 
     @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
         // 檢查註冊的 email (因為 Email 不能重複)
-        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
+        Users users = userDao.getUserByEmail(userRegisterRequest.getEmail());
 
-        if (user != null) {
+        if (users != null) {
             log.warn("該 Email ({}) 已經被註冊", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -45,11 +45,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(UserLoginRequest userLoginRequest) {
-        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+    public Users login(UserLoginRequest userLoginRequest) {
+        Users users = userDao.getUserByEmail(userLoginRequest.getEmail());
 
         // 檢查 user 是否存在
-        if (user == null) {
+        if (users == null) {
             log.warn("該 email ({}) 尚未註冊", userLoginRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -58,8 +58,8 @@ public class UserServiceImpl implements UserService {
         String hashedPassword = DigestUtils.md5DigestAsHex(userLoginRequest.getPassword().getBytes());
 
         // 比較密碼
-        if (user.getPassword().equals(hashedPassword)) {
-            return user;
+        if (users.getPassword().equals(hashedPassword)) {
+            return users;
         } else {
             log.warn("該 email ({}) 的密碼不正確", userLoginRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

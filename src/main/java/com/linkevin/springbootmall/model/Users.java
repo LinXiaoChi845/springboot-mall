@@ -1,11 +1,10 @@
 package com.linkevin.springbootmall.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
-public class User {
+public class Users {
 
     private Integer userId;
 

@@ -1,16 +1,16 @@
 package com.linkevin.springbootmall.rowmapper;
 
-import com.linkevin.springbootmall.model.User;
+import com.linkevin.springbootmall.model.Users;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserRowMapper implements RowMapper<User> {
+public class UserRowMapper implements RowMapper<Users> {
 
     @Override
-    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-        User user = new User();
+    public Users mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Users user = new Users();
 
         user.setUserId(rs.getInt("user_id"));
         user.setEmail(rs.getString("email"));

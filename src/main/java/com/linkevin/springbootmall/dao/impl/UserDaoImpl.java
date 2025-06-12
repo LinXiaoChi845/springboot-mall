@@ -2,11 +2,9 @@ package com.linkevin.springbootmall.dao.impl;
 
 import com.linkevin.springbootmall.dao.UserDao;
 import com.linkevin.springbootmall.dto.UserRegisterRequest;
-import com.linkevin.springbootmall.model.User;
+import com.linkevin.springbootmall.model.Users;
 import com.linkevin.springbootmall.rowmapper.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -26,7 +24,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Integer createUser(UserRegisterRequest userRegisterRequest) {
-        String sql="INSERT INTO [dbo].[user] (email, password, created_date, last_modified_date ) " +
+        String sql="INSERT INTO users (email, password, created_date, last_modified_date ) " +
                 "VALUES(:email, :password, :createdDate, :lastModifiedDate)";
 
         Date now = new Date();
@@ -47,36 +45,36 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserById(Integer userId) {
+    public Users getUserById(Integer userId) {
         String sql = "SELECT user_id, email, password, created_date, last_modified_date " +
-                "FROM [dbo].[user] " +
+                "FROM users " +
                 "WHERE user_id = :userId";
 
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
 
-        List<User> userList = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());
+        List<Users> usersList = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());
 
-        if (userList.size() > 0){
-            return userList.getFirst();
+        if (usersList.size() > 0){
+            return usersList.getFirst();
         } else {
             return null;
         }
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public Users getUserByEmail(String email) {
         String sql = "SELECT user_id, email, password, created_date, last_modified_date " +
-                "FROM [dbo].[user] " +
+                "FROM users " +
                 "WHERE email = :email";
 
         Map<String, Object> map = new HashMap<>();
         map.put("email", email);
 
-        List<User> userList = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());
+        List<Users> usersList = namedParameterJdbcTemplate.query(sql, map, new UserRowMapper());
 
-        if (userList.size() > 0){
-            return userList.get(0);
+        if (usersList.size() > 0){
+            return usersList.get(0);
         } else {
             return null;
         }

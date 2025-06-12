@@ -2,7 +2,7 @@ package com.linkevin.springbootmall.controller;
 
 import com.linkevin.springbootmall.dto.UserLoginRequest;
 import com.linkevin.springbootmall.dto.UserRegisterRequest;
-import com.linkevin.springbootmall.model.User;
+import com.linkevin.springbootmall.model.Users;
 import com.linkevin.springbootmall.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +19,19 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/users/register")
-    public ResponseEntity<User> register(@RequestBody @Valid UserRegisterRequest userRegisterRequest) {
+    public ResponseEntity<Users> register(@RequestBody @Valid UserRegisterRequest userRegisterRequest) {
         Integer userId = userService.register(userRegisterRequest);
 
-        User user = userService.getUserById(userId);
+        Users users = userService.getUserById(userId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(users);
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+    public ResponseEntity<Users> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
 
-        User user = userService.login(userLoginRequest);
+        Users users = userService.login(userLoginRequest);
 
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 }

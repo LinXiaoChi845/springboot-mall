@@ -1,10 +1,8 @@
 package com.linkevin.springbootmall.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkevin.springbootmall.constant.ProductCategory;
 import com.linkevin.springbootmall.dto.ProductRequest;
-import org.apache.coyote.Request;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

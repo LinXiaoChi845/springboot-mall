@@ -1,13 +1,13 @@
 package com.linkevin.springbootmall.dao;
 
 import com.linkevin.springbootmall.dto.UserRegisterRequest;
-import com.linkevin.springbootmall.model.User;
+import com.linkevin.springbootmall.model.Users;
 
 public interface UserDao {
 
     Integer createUser(UserRegisterRequest userRegisterRequest);
 
-    User getUserById(Integer userId);
+    Users getUserById(Integer userId);
 
-    User getUserByEmail(String email);
+    Users getUserByEmail(String email);
 }
