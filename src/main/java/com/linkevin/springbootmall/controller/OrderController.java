@@ -22,8 +22,10 @@ public class OrderController {
     public ResponseEntity<Orders> newOrder(@PathVariable Integer userId,
                                       @RequestBody @Valid NewOrderRequest newOrderRequest) {
 
+        // 創建訂單
         Integer orderId = orderService.newOrder(userId, newOrderRequest);
 
+        // 讀取訂單資料
         Orders orders = orderService.getOrderByOrderId(orderId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orders);
