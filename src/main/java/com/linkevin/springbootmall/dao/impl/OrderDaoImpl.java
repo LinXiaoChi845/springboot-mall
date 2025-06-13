@@ -1,6 +1,7 @@
 package com.linkevin.springbootmall.dao.impl;
 
 import com.linkevin.springbootmall.dao.OrderDao;
+import com.linkevin.springbootmall.dto.OrderQueryParams;
 import com.linkevin.springbootmall.model.OrderItem;
 import com.linkevin.springbootmall.model.Orders;
 import com.linkevin.springbootmall.rowmapper.OrderItemRowMapper;
@@ -22,6 +23,52 @@ public class OrderDaoImpl implements OrderDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT COUNT(order_id) FROM orders WHERE 1 = 1";
+
+        Map<String, Object> params = new HashMap<>();
+
+        if (orderQueryParams.getUserId() != null) {
+            sql = sql + " AND orders.user_id = :userId ";
+            params.put("userId", orderQueryParams.getUserId());
+        }
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+
+        return total;
+    }
+
+    @Override
+    public List<Orders> getOrders(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date " +
+                "FROM orders WHERE 1 = 1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 查詢條件
+        if (orderQueryParams.getUserId() != null) {
+            sql = sql + " AND orders.user_id = :userId ";
+            map.put("userId", orderQueryParams.getUserId());
+        }
+
+        // 排序
+        sql = sql + " ORDER BY created_date DESC ";
+
+        // 分頁 ( 因為 SQL SERVER 沒有 LIMIT 指令，要用 FETCH 指令 )
+        sql = sql + " OFFSET :offset ROWS ";
+        map.put("offset", orderQueryParams.getOffset());
+
+        if (orderQueryParams.getLimit() > 0 ) {
+            sql = sql + " FETCH FIRST :limit ROWS ONLY";
+            map.put("limit", orderQueryParams.getLimit());
+        }
+
+        List<Orders> ordersList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        return ordersList;
+    }
 
     @Override
     public Orders getOrderByOrderId(Integer orderId) {
