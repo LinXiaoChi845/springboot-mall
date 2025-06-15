@@ -2,6 +2,7 @@ package com.linkevin.springbootmall.dao.impl;
 
 import com.linkevin.springbootmall.dao.OrderDao;
 import com.linkevin.springbootmall.dto.OrderQueryParams;
+import com.linkevin.springbootmall.dto.ProductQueryParams;
 import com.linkevin.springbootmall.model.OrderItem;
 import com.linkevin.springbootmall.model.Orders;
 import com.linkevin.springbootmall.rowmapper.OrderItemRowMapper;
@@ -28,14 +29,12 @@ public class OrderDaoImpl implements OrderDao {
     public Integer countOrder(OrderQueryParams orderQueryParams) {
         String sql = "SELECT COUNT(order_id) FROM orders WHERE 1 = 1";
 
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
-        if (orderQueryParams.getUserId() != null) {
-            sql = sql + " AND orders.user_id = :userId ";
-            params.put("userId", orderQueryParams.getUserId());
-        }
+        // 查詢條件
+        sql = addFilteringSql(sql, map, orderQueryParams);
 
-        Integer total = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
 
         return total;
     }
@@ -48,10 +47,7 @@ public class OrderDaoImpl implements OrderDao {
         Map<String, Object> map = new HashMap<>();
 
         // 查詢條件
-        if (orderQueryParams.getUserId() != null) {
-            sql = sql + " AND orders.user_id = :userId ";
-            map.put("userId", orderQueryParams.getUserId());
-        }
+        sql = addFilteringSql(sql, map, orderQueryParams);
 
         // 排序
         sql = sql + " ORDER BY created_date DESC ";
@@ -159,4 +155,14 @@ public class OrderDaoImpl implements OrderDao {
         namedParameterJdbcTemplate.batchUpdate(sql, parameterSources);
     }
 
+    // 拼接查詢條件
+    private String addFilteringSql(String sql, Map<String, Object> map, OrderQueryParams orderQueryParams) {
+
+        if (orderQueryParams.getUserId() != null) {
+            sql = sql + " AND orders.user_id = :userId ";
+            map.put("userId", orderQueryParams.getUserId());
+        }
+
+        return sql;
+    }
 }
